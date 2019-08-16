@@ -360,7 +360,7 @@ class ReportGenerator {
 				body.raw(`<script src="${customScript}"></script>`);
 			}
 			if (screenshotsPath) {
-				body.raw(`<script src="scipts/toggle.js"></script>`);	
+				body.raw(`<script src="../src/scipts/toggle.js"></script>`);	
 			}
 			return resolve(htmlOutput);
 		});
