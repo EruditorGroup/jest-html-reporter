@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hargne/jest-html-reporter.git"
+    "url": "git+https://github.com/archer62/jest-html-reporter.git"
   },
   "keywords": [
     "jest",
