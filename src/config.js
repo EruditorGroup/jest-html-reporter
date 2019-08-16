@@ -126,6 +126,13 @@ const getSort = () =>
 const getStatusIgnoreFilter = () =>
 	process.env.JEST_HTML_REPORTER_STATUS_FILTER || config.statusIgnoreFilter || null;
 
+/**
+ * Returns the Screenshots path that should be attached to the test report
+ * @return {String}
+ */
+const getScreenshotsPath = () =>
+	process.env.JEST_HTML_REPORTER_SCREENSHOTS_PATH || config.screenshotsPath || null;
+
 module.exports = {
 	config,
 	setup,
@@ -144,4 +151,5 @@ module.exports = {
 	getDateFormat,
 	getSort,
 	getStatusIgnoreFilter,
+	getScreenshotsPath,
 };

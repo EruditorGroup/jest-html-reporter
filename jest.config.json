@@ -9,6 +9,9 @@
 		"!**/coverage/**",
 		"!**/vendor/**"
 	],
+	"coveragePathIgnorePatterns": [
+		"src/scripts"
+	],
 	"coverageDirectory": "./coverage",
     "coverageReporters": ["json", "html", "text", "text-summary"],
 	"coverageThreshold": {
