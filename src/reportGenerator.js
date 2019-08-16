@@ -70,6 +70,15 @@ class ReportGenerator {
 	}
 
 	/**
+	 * Returns the script to be used for showing screenshots in the test report.
+	 * @return {Promise}
+	 */
+	getScreenhotsScriptContent() {
+		const filePath = this.config.getScreenhotsScriptFilepath();
+		return utils.getFileContent({ filePath });
+	}
+
+	/**
 	 * Returns a HTML containing the test report.
 	 * @param  {Object} data			The test result data (required)
 	 * @param  {String} stylesheet		Optional stylesheet content
@@ -109,7 +118,7 @@ class ReportGenerator {
 				body.raw(`<script src="${customScript}"></script>`);
 			}
 			if (screenshotsPath) {
-				body.raw(`<script src="../src/scipts/toggle.js"></script>`);	
+				this.getScreenhotsScriptContent().then(content => body.raw(`<script>${content}</script>`));
 			}
 			return resolve(htmlOutput);
 		});
@@ -207,8 +216,9 @@ class ReportGenerator {
 				// Attach screenshots
 				if (test.status === 'failed' && screenshotsPath) {
 					const failureScreenShotDiv = testTitleTd.ele('div', { class: 'failureScreenshot' });
-					const button = failureScreenShotDiv.ele('a', {class: 'collapsible', href: 'javascript: void(0);'}, 'Screenshot');
-					failureScreenShotDiv.ele('img', {src: `${screenshotsPath}/${test.title}.png`, class: 'screenshot'});
+					// eslint-disable-next-line no-script-url
+					failureScreenShotDiv.ele('a', { class: 'collapsible', href: 'javascript: void(0);' }, 'Screenshot');
+					failureScreenShotDiv.ele('img', { src: `${screenshotsPath}/${test.title}.png`, class: 'screenshot' });
 				}
 				// Append data to <tr>
 				testTr.ele('td', { class: 'result' }, (test.status === 'passed') ? `${test.status} in ${test.duration / 1000}s` : test.status);

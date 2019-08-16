@@ -321,6 +321,15 @@ class ReportGenerator {
 	}
 
 	/**
+	 * Returns the script to be used for showing screenshots in the test report.
+	 * @return {Promise}
+	 */
+	getScreenhotsScriptContent() {
+		const filePath = this.config.getScreenhotsScriptFilepath();
+		return utils.getFileContent({ filePath });
+	}
+
+	/**
 	 * Returns a HTML containing the test report.
 	 * @param  {Object} data			The test result data (required)
 	 * @param  {String} stylesheet		Optional stylesheet content
@@ -360,7 +369,7 @@ class ReportGenerator {
 				body.raw(`<script src="${customScript}"></script>`);
 			}
 			if (screenshotsPath) {
-				body.raw(`<script src="../src/scipts/toggle.js"></script>`);	
+				this.getScreenhotsScriptContent().then(content => body.raw(`<script>${content}</script>`));
 			}
 			return resolve(htmlOutput);
 		});
@@ -458,8 +467,9 @@ class ReportGenerator {
 				// Attach screenshots
 				if (test.status === 'failed' && screenshotsPath) {
 					const failureScreenShotDiv = testTitleTd.ele('div', { class: 'failureScreenshot' });
-					const button = failureScreenShotDiv.ele('a', {class: 'collapsible', href: 'javascript: void(0);'}, 'Screenshot');
-					failureScreenShotDiv.ele('img', {src: `${screenshotsPath}/${test.title}.png`, class: 'screenshot'});
+					// eslint-disable-next-line no-script-url
+					failureScreenShotDiv.ele('a', { class: 'collapsible', href: 'javascript: void(0);' }, 'Screenshot');
+					failureScreenShotDiv.ele('img', { src: `${screenshotsPath}/${test.title}.png`, class: 'screenshot' });
 				}
 				// Append data to <tr>
 				testTr.ele('td', { class: 'result' }, (test.status === 'passed') ? `${test.status} in ${test.duration / 1000}s` : test.status);
@@ -541,6 +551,13 @@ const getTheme = () =>
  */
 const getStylesheetFilepath = () =>
 	process.env.JEST_HTML_REPORTER_STYLE_OVERRIDE_PATH || config.styleOverridePath || path.join(__dirname, `../style/${getTheme()}.css`);
+
+/**
+ * Returns the Screenhots Script path for the test report
+ * @return {String}
+ */
+const getScreenhotsScriptFilepath = () =>
+	path.join(__dirname, '../scripts/toggle.js');
 
 /**
  * Returns the Custom Script path that should be injected into the test report
@@ -639,6 +656,7 @@ module.exports = {
 	getSort,
 	getStatusIgnoreFilter,
 	getScreenshotsPath,
+	getScreenhotsScriptFilepath,
 };
 });
 
@@ -660,6 +678,7 @@ var config_16 = config_1.getDateFormat;
 var config_17 = config_1.getSort;
 var config_18 = config_1.getStatusIgnoreFilter;
 var config_19 = config_1.getScreenshotsPath;
+var config_20 = config_1.getScreenhotsScriptFilepath;
 
 function JestHtmlReporter(globalConfig, options) {
 	// Initiate the config and setup the Generator class
