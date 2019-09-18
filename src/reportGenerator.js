@@ -70,6 +70,15 @@ class ReportGenerator {
 	}
 
 	/**
+	 * Returns the script to be used for showing screenshots in the test report.
+	 * @return {Promise}
+	 */
+	getScreenhotsScriptContent() {
+		const filePath = this.config.getScreenhotsScriptFilepath();
+		return utils.getFileContent({ filePath });
+	}
+
+	/**
 	 * Returns a HTML containing the test report.
 	 * @param  {Object} data			The test result data (required)
 	 * @param  {String} stylesheet		Optional stylesheet content
@@ -83,8 +92,10 @@ class ReportGenerator {
 
 			// Fetch Page Title from config
 			const pageTitle = this.config.getPageTitle();
+			// Get path to screenshots directory
+			const screenshotsPath = this.config.getScreenshotsPath();
 			// Create Report Body
-			const reportContent = this.getReportBody({ data, pageTitle });
+			const reportContent = this.getReportBody({ data, pageTitle, screenshotsPath });
 
 			// ** (CUSTOM) BOILERPLATE OPTION
 			// Check if a boilerplate has been specified
@@ -106,6 +117,9 @@ class ReportGenerator {
 			if (customScript) {
 				body.raw(`<script src="${customScript}"></script>`);
 			}
+			if (screenshotsPath) {
+				this.getScreenhotsScriptContent().then(content => body.raw(`<script>${content}</script>`));
+			}
 			return resolve(htmlOutput);
 		});
 	}
@@ -116,7 +130,7 @@ class ReportGenerator {
 	 * @param  {String} pageTitle	The title of the report
 	 * @return {xmlbuilder}
 	 */
-	getReportBody({ data, pageTitle }) {
+	getReportBody({ data, pageTitle, screenshotsPath }) {
 		const reportBody = xmlbuilder.begin().element('div', { id: 'jesthtml-content' });
 		// HEADER
 		// **
@@ -198,6 +212,13 @@ class ReportGenerator {
 					test.failureMessages.forEach((failureMsg) => {
 						failureMsgDiv.ele('pre', { class: 'failureMsg' }, stripAnsi(failureMsg));
 					});
+				}
+				// Attach screenshots
+				if (test.status === 'failed' && screenshotsPath) {
+					const failureScreenShotDiv = testTitleTd.ele('div', { class: 'failureScreenshot' });
+					// eslint-disable-next-line no-script-url
+					failureScreenShotDiv.ele('a', { class: 'collapsible', href: 'javascript: void(0);' }, 'Screenshot');
+					failureScreenShotDiv.ele('img', { src: `${screenshotsPath}/${test.title}.png`, class: 'screenshot' });
 				}
 				// Append data to <tr>
 				testTr.ele('td', { class: 'result' }, (test.status === 'passed') ? `${test.status} in ${test.duration / 1000}s` : test.status);

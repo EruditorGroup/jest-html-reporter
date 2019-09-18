@@ -56,6 +56,13 @@ const getStylesheetFilepath = () =>
 	process.env.JEST_HTML_REPORTER_STYLE_OVERRIDE_PATH || config.styleOverridePath || path.join(__dirname, `../style/${getTheme()}.css`);
 
 /**
+ * Returns the Screenhots Script path for the test report
+ * @return {String}
+ */
+const getScreenhotsScriptFilepath = () =>
+	path.join(__dirname, '../scripts/toggle.js');
+
+/**
  * Returns the Custom Script path that should be injected into the test report
  * @return {String}
  */
@@ -126,6 +133,13 @@ const getSort = () =>
 const getStatusIgnoreFilter = () =>
 	process.env.JEST_HTML_REPORTER_STATUS_FILTER || config.statusIgnoreFilter || null;
 
+/**
+ * Returns the Screenshots path that should be attached to the test report
+ * @return {String}
+ */
+const getScreenshotsPath = () =>
+	process.env.JEST_HTML_REPORTER_SCREENSHOTS_PATH || config.screenshotsPath || null;
+
 module.exports = {
 	config,
 	setup,
@@ -144,4 +158,6 @@ module.exports = {
 	getDateFormat,
 	getSort,
 	getStatusIgnoreFilter,
+	getScreenshotsPath,
+	getScreenhotsScriptFilepath,
 };

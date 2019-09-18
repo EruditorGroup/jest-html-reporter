@@ -14,6 +14,7 @@ const mockedConfig = {
 	getCustomScriptFilepath: () => 'test.js',
 	shouldUseCssFile: () => false,
 	getStatusIgnoreFilter: () => null,
+	getScreenshotsPath: () => null,
 };
 
 describe('reportGenerator', () => {
